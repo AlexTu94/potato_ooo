@@ -1,0 +1,25 @@
+# Directories created/populated at build time:
+tests-build/
+develop/
+
+# Vim swap files:
+*.swp
+
+# Binary files:
+*.[oa]
+*.elf
+*.bin
+*.coe
+*.map
+
+# LaTeX Files:
+*.aux
+*.log
+*.out
+
+# Xilinx Crap:
+*.jou
+*.prj
+*.pb
+xsim.dir/
+
