@@ -160,7 +160,7 @@ architecture behaviour of pp_core is
 	signal mux_exe_alu_y_src    : alu_operand_source;
 	signal mux_exe_rd_write	    : std_logic;
 	signal mux_exe_rd_addr	    : register_address;
-	signal mux_ex_alu_op	    : alu_operation;
+	signal mux_exe_alu_op	    : alu_operation;
 
 	-- Execute stage signals:
 	signal ex_dmem_address   : std_logic_vector(31 downto 0);
@@ -404,7 +404,7 @@ begin
 			rob_empty 				=> rob_table_empty
 	    );
 
-	to_exe_count_instruction <= '1' when rob_num /= 8 or id_count_instruction_csr = '1' else '0';
+	to_exe_count_instruction <= '1' when rob_num /= MAIN_TABLE or id_count_instruction_csr = '1' else '0';
 
 	------- Execute (EX) Stage -------
 	execute: entity work.pp_execute
@@ -441,7 +441,7 @@ begin
 			csr_value_in 				=> csr_read_data,
 			csr_value_out 				=> ex_csr_data,
 			csr_use_immediate_in 		=> id_csr_use_immediate,
-			alu_op_in 					=> mux_ex_alu_op,
+			alu_op_in 					=> mux_exe_alu_op,
 			rob_op_num_in				=> rob_num,
 			exe_op_num_out				=> ex_num,
 			alu_x_src_in 				=> mux_exe_alu_x_src,
@@ -491,11 +491,11 @@ begin
 
 	mux_exe_rs1_address <= rob_alu_x_addr when id_count_instruction_csr = '0' else id_rs1_address;
 	mux_exe_rs2_address <= rob_alu_y_addr when id_count_instruction_csr = '0' else id_rs2_address;
-	mux_exe_alu_x_src <= rob_alu_x_src when id_count_instruction_csr = '0' else id_alu_x_src;
-	mux_exe_alu_y_src <= rob_alu_y_src when id_count_instruction_csr = '0' else id_alu_y_src;
-	mux_exe_rd_write <= '0' when id_count_instruction_csr = '0' else id_rd_write;
-	mux_exe_rd_addr <= (others => '0') when id_count_instruction_csr = '0' else id_rd_address;
-	mux_ex_alu_op <= rob_alu_op when id_count_instruction_csr = '0' else id_alu_op;
+	mux_exe_alu_x_src 	<= rob_alu_x_src when id_count_instruction_csr = '0' else id_alu_x_src;
+	mux_exe_alu_y_src 	<= rob_alu_y_src when id_count_instruction_csr = '0' else id_alu_y_src;
+	mux_exe_rd_write 	<= '0' when id_count_instruction_csr = '0' else id_rd_write;
+	mux_exe_rd_addr 	<= (others => '0') when id_count_instruction_csr = '0' else id_rd_address;
+	mux_exe_alu_op 		<= rob_alu_op when id_count_instruction_csr = '0' else id_alu_op;
 
 	dmem_address 	<= dmem_address_p   when (stall_mem = '0' and stall_mem_p = '1') or stall_mem = '1' else ex_dmem_address;
 	sg_dmem_address <= dmem_address_p   when (stall_mem = '0' and stall_mem_p = '1') or stall_mem = '1' else ex_dmem_address;
