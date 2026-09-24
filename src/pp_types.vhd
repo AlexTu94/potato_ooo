@@ -73,6 +73,12 @@ package pp_types is
 	--! Converts an std_logic_vector to a test context:
 	function std_logic_to_test_context(input : in std_logic_vector(31 downto 0)) return test_context;
 
+	--! Global signals to control the performances:
+	signal global_counter_cycle : std_logic_vector(63 downto 0);
+	signal global_counter_instret : std_logic_vector(63 downto 0);
+	signal global_counter_instret_csr : std_logic_vector(63 downto 0);
+
+
 end package pp_types;
 
 package body pp_types is

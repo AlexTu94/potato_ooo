@@ -18,7 +18,7 @@ entity pp_core is
 		RESET_ADDRESS          : std_logic_vector(31 downto 0) := x"00000000"; --! Address of the first instruction to execute.
 		MTIME_DIVIDER          : positive := 5;                                --! Divider for the clock driving the MTIME counter
 		TIME_DIVIDER           : positive := 5;                                --! Divider for the clock dirivng the TIME counter
-		MAIN_TABLE			   : positive := 16;								   --! Length of the ROB's Main Table
+		MAIN_TABLE			   : positive := 16;							   --! Length of the ROB's Main Table
 		THREAD_TABLE		   : positive := 1								   --! Length of the ROB's THREAD Table
 	);
 	port(

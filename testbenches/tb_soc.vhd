@@ -233,7 +233,6 @@ begin
 				readline(dmem_file, input_line);
 				hread(input_line, input_value);
 
-				-- Swap endianness, TODO: prevent this, fix scripts/extract_hex.sh
 				temp(7 downto 0) := input_value(31 downto 24);
 				temp(15 downto 8) := input_value(23 downto 16);
 				temp(23 downto 16) := input_value(15 downto 8);
@@ -284,6 +283,9 @@ begin
 		wait until test_context_out.state = TEST_PASSED or test_context_out.state = TEST_FAILED;
 		if test_context_out.state = TEST_PASSED then
 			report "Success!" severity NOTE;
+			report "counter_cycle: " & integer'image(to_integer(unsigned(global_counter_cycle)));
+			report "counter_instret: " & integer'image(to_integer(unsigned(global_counter_instret)));
+			report "counter_instret_csr: " & integer'image(to_integer(unsigned(global_counter_instret_csr)));
 		else
 			report "Failure in test " & integer'image(to_integer(unsigned(test_context_out.number))) & "!" severity NOTE;
 		end if;

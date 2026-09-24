@@ -66,7 +66,7 @@ architecture testbench of tb_processor is
 	signal dmem_memory : memory_array(DMEM_BASE to DMEM_END);
 
 	signal simulation_finished : boolean := false;
-
+	
 begin
 
 	uut: entity work.pp_core
@@ -243,6 +243,9 @@ begin
 		wait until test_context_out.state = TEST_PASSED or test_context_out.state = TEST_FAILED;
 		if test_context_out.state = TEST_PASSED then
 			report "Success!" severity NOTE;
+			report "counter_cycle: " & integer'image(to_integer(unsigned(global_counter_cycle)));
+			report "counter_instret: " & integer'image(to_integer(unsigned(global_counter_instret)));
+			report "counter_instret_csr: " & integer'image(to_integer(unsigned(global_counter_instret_csr)));
 		else
 			report "Failure in test " & integer'image(to_integer(unsigned(test_context_out.number))) & "!" severity NOTE;
 		end if;

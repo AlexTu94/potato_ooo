@@ -74,8 +74,8 @@ SOC_GTKWAVE_SCRIPT := \
 
 .PHONY: all analyse_packages analyse_processor compile_test run_testbench run_test check_syntax clean
 
-#.DEFAULT_GOAL := run_testbench
-.DEFAULT_GOAL := run_soc_test
+.DEFAULT_GOAL := run_testbench
+#.DEFAULT_GOAL := run_soc_test
 
 analyse_packages: 
 	@echo "--- 1. Analyzing packages (VHDL-2008) ---"
@@ -116,7 +116,7 @@ run_testbench: compile_test
 	@$(GHDL) -e $(M_FLAGS) tb_processor
 
 	@echo "--- 6. Running Simulation & Generating Waveform ---"
-	@$(GHDL) -r $(M_FLAGS) tb_processor $(SIM_GENERICS) --ieee-asserts=disable --wave=tb_processor.ghw
+	@$(GHDL) -r $(M_FLAGS) tb_processor $(SIM_GENERICS) --ieee-asserts=disable --wave=tb_processor.ghw --vcd=tb_processor.vcd
 	@echo "--- Simulation Finished ---"
 	@gtkwave -S $(CORE_GTKWAVE_SCRIPT) tb_processor.ghw &
 

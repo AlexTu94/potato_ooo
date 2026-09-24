@@ -115,22 +115,6 @@ compile-tests: copy-riscv-tests
 		scripts/extract_hex.sh tests-build/$$test.elf tests-build/$$test-imem.hex tests-build/$$test-dmem.hex; \
 	done
 
-#		1. -DPOTATO_TEST_ASSEMBLY
-#	Questa è una definizione del preprocessore.
-#	Sintassi: Il flag -D (senza spazio) dice al compilatore GCC di definire una macro.
-#	Significato: Scrivere -DPOTATO_TEST_ASSEMBLY nella riga di comando equivale a scrivere 
-#	#define POTATO_TEST_ASSEMBLY 1 all'inizio di ogni file sorgente .S che viene compilato.
-#	A cosa serve: Probabilmente, all'interno dei file Assembly dei test (.S), ci sono delle direttive condizionali (come 
-#	#ifdef POTATO_TEST_ASSEMBLY) che attivano o disattivano parti di codice specifiche per questo processore ("Potato") 
-#	rispetto all'implementazione generica RISC-V.
-#		2. -Iriscv-tests
-#	Questa è una direttiva di inclusione (Include Path).
-#	Sintassi: Il flag -I (spesso senza spazio, ma funziona anche con) dice al compilatore dove cercare i file header (.h).
-#	Significato: Dice al compilatore: "Quando trovi una direttiva #include "...", cerca il file anche nella cartella chiamata riscv-tests".
-#	ile di test probabilmente includono macro o definizioni standard (es. #include "riscv_test.h"). Poiché il Makefile copia i test dalla 
-#	cartella originale ma magari non gli header, questo flag assicura che il compilatore riesca a trovare i file di supporto necessari 
-#	che si trovano nella directory riscv-tests.
-
 run-tests: potato.prj compile-tests
 	for test in $(RISCV_TESTS) $(LOCAL_TESTS); do \
 		echo -ne "Running test $$test:\t"; \
@@ -138,10 +122,11 @@ run-tests: potato.prj compile-tests
 		test -f tests-build/$$test-dmem.hex && DMEM_FILENAME="tests-build/$$test-dmem.hex"; \
 		xelab tb_processor -generic_top "IMEM_FILENAME=tests-build/$$test-imem.hex" -generic_top "DMEM_FILENAME=$$DMEM_FILENAME" -prj potato.prj > /dev/null; \
 		xsim tb_processor -R --onfinish quit > tests-build/$$test.results; \
+#		cat tests-build/$$test.results | awk '/Note:/ {print}' | sed 's/Note: //' | awk '/Success|Failure|counter_/ {print}'; \
 		cat tests-build/$$test.results | awk '/Note:/ {print}' | sed 's/Note://' | awk '/Success|Failure/ {print}'; \
 	done
 
-# It was modified to be able to have the .vcd of all the tests, above commented there is the previous version
+# It was modified to be able to have the .vcd of all the tests
 run-tests-vcd: potato.prj compile-tests
 	for test in $(RISCV_TESTS) $(LOCAL_TESTS); do \
 		echo -ne "Running test $$test:\t"; \
@@ -151,6 +136,7 @@ run-tests-vcd: potato.prj compile-tests
 		echo "open_vcd tests-build/$$test.vcd; log_vcd [get_objects -r *]; run all; close_vcd; quit" > tests-build/xsim_wave.tcl; \
 		xsim tb_processor -tclbatch tests-build/xsim_wave.tcl > tests-build/$$test.results; \
 		cat tests-build/$$test.results | awk '/Note:/ {print}' | sed 's/Note://' | awk '/Success|Failure/ {print}'; \
+#		cat tests-build/$$test.results | awk '/Note:/ {print}' | sed 's/Note: //' | awk '/Success|Failure|counter_/ {print}'; \
 	done
 
 run-soc-tests: potato.prj compile-tests
@@ -161,9 +147,10 @@ run-soc-tests: potato.prj compile-tests
 		xelab tb_soc -generic_top "IMEM_FILENAME=tests-build/$$test-imem.hex" -generic_top "DMEM_FILENAME=$$DMEM_FILENAME" -prj potato.prj > /dev/null; \
 		xsim tb_soc -R --onfinish quit > tests-build/$$test.results-soc; \
 		cat tests-build/$$test.results-soc | awk '/Note:/ {print}' | sed 's/Note://' | awk '/Success|Failure/ {print}'; \
+#		cat tests-build/$$test.results-soc | awk '/Note:/ {print}' | sed 's/Note://' | awk '/Success|Failure|counter_/ {print}'; \
 	done
 
-# It was modified to be able to have the .vcd of all the tests, above commented there is the previous version
+# It was modified to be able to have the .vcd of all the tests
 run-soc-tests-vcd: potato.prj compile-tests
 	for test in $(RISCV_TESTS) $(LOCAL_TESTS); do \
 		echo -ne "Running SOC test $$test:\t"; \

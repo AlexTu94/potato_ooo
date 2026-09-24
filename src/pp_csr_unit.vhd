@@ -65,6 +65,7 @@ architecture behaviour of pp_csr_unit is
 	signal counter_time    : std_logic_vector(63 downto 0);
 	signal counter_cycle   : std_logic_vector(63 downto 0);
 	signal counter_instret : std_logic_vector(63 downto 0);
+	signal counter_instret_csr : std_logic_vector(63 downto 0);
 
 	-- Machine time counter:
 	signal mtime_clock_counter : natural := 0;
@@ -303,5 +304,19 @@ begin
 			count => counter_instret,
 			increment => count_instruction
 		);
+
+	instret_counter_csr: entity work.pp_counter
+		port map(
+			clk => clk,
+			reset => reset,
+			count => counter_instret_csr,
+			increment => count_instruction_csr
+		);
+
+	--! Signals to check the performances
+	global_counter_cycle <= counter_cycle;
+	global_counter_instret <= counter_instret;
+	global_counter_instret_csr <= counter_instret_csr;
+
 
 end architecture behaviour;
