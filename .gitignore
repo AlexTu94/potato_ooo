@@ -12,6 +12,7 @@ vivado/
 *.bin
 *.coe
 *.map
+*.wdb
 
 # LaTeX Files:
 *.aux
